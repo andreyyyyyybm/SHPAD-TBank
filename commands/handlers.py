@@ -14,5 +14,5 @@ router = Router()
 async def start(message: Message):
     await message.reply(
         text="f",
-        reply_markup=kb.keyboard_main
+        reply_markup=kb.keyboard_groups
     )
