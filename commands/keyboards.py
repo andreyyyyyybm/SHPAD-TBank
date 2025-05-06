@@ -6,7 +6,6 @@ keryboard_main = InlineKeyboardMarkup(
             InlineKeyboardButton(text="Системные", callback_data="system"),
             InlineKeyboardButton(text="Путеществие", callback_data="travel"),
         ],
-        [InlineKeyboardButton(text="Информация", callback_data="info_user")],
     ],
 )
 
