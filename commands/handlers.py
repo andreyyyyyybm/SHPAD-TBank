@@ -1,13 +1,13 @@
 import os
 
 from aiogram import F, Router
-from aiogram.filters import CommandStart, StateFilter
+from aiogram.filters import CommandStart, StateFilter, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import BufferedInputFile, CallbackQuery, Message
 
 import commands.keyboards as kb
-
+from ml import find_trip
 router = Router()
 
 
@@ -68,3 +68,7 @@ async def task_manager(callback: CallbackQuery):
     await callback.message.reply(
         text="тут типа админ добавит :)", reply_markup=kb.keyboard_task
     )
+
+@router.message(Command("find_trip"))
+async def test_find(message: Message):
+    await message.answer(text=f"{find_trip.find_trip()}")

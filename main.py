@@ -10,6 +10,7 @@ from commands.handlers import router
 from db import database
 from db import db_utils
 
+
 load_dotenv()
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
