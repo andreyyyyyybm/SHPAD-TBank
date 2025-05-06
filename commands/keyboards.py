@@ -2,13 +2,21 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 keryboard_main = InlineKeyboardMarkup(
     inline_keyboard=[
-        [
+        [   InlineKeyboardButton(text="Прослушка", callback_data="listen"),
             InlineKeyboardButton(text="Системные", callback_data="system"),
-            InlineKeyboardButton(text="Путеществие", callback_data="travel"),
+            InlineKeyboardButton(text="Путешествие", callback_data="travel"),
         ],
     ],
 )
 
+
+keryboard_listen = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [   InlineKeyboardButton(text="Включить", callback_data="listen_on"),
+            InlineKeyboardButton(text="Выключить", callback_data="listen_off"),
+        ],
+    ],
+)
 
 keryboard_alerts = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -27,7 +35,7 @@ keyboard_trip = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="Интересы", callback_data="interests")],
         [
             InlineKeyboardButton(
-                text="Отвественность", callback_data="responsibility"
+                text="Отвественности", callback_data="responsibility"
             )
         ],
     ],
@@ -112,7 +120,7 @@ keyboard_interests = InlineKeyboardMarkup(
 )
 
 
-button_names = ["Приехать в Питер", "Заселиться", "Найти бар", "Попить пиво"]
+button_names = ["Приехать в Питер", "Заселиться", "Найти магнит", "Попить кефир"]
 
 keyboard_task = InlineKeyboardMarkup(
     inline_keyboard=[

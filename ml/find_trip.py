@@ -8,6 +8,8 @@ import json
 import codecs
 from aiogram.types import Message
 
+import commands.handlers
+
 load_dotenv()
 
 with codecs.open("ml/promt.txt","r","utf-8") as promt_:
@@ -15,14 +17,10 @@ with codecs.open("ml/promt.txt","r","utf-8") as promt_:
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
-def find_trip():
+def find_trip(data):
     # br = do_utils.BudgetRepository()
-    min_cost = 100_000
-    max_cost = 200_000
-    white_list = "Italy, France"
-    black_list = "Rome"
-    pref = "Skiing,diving in a warm sea"
-    with_dates = ""
+    print(data)
+    min_cost, max_cost, white_list, black_list, pref, with_dates = data
     end_dates = ""
 
 
@@ -110,5 +108,4 @@ def find_trip():
 
         # Добавляем заметки
         text_message += f"\n\n📝 Заметки:\n{trip['notes']}"
-
         return text_message
