@@ -2,10 +2,9 @@ from sqlalchemy import Column, Integer, String
 from db.database import Base
 
 
-class Task(Base):
-    __tablename__ = "task"
+class Interest(Base):
+    __tablename__ = "interest"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     chat_id = Column(Integer)
-    user_id = Column(Integer)
-    target = Column(String)
+    pref = Column(String)
