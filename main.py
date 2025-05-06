@@ -7,6 +7,8 @@ from aiogram import Dispatcher
 from dotenv import load_dotenv
 
 from commands.handlers import router
+from db import database
+from db import test
 
 load_dotenv()
 
@@ -18,7 +20,16 @@ dp = Dispatcher()
 dp.include_router(router)
 
 
+async def init_db():
+    db = database.Database()
+    session = await db.get_session()
+    br = test.BudgetModel(session)
+    await db.create_db()
+    await db.close()
+
+
 async def main():
+    await init_db()
     await dp.start_polling(bot)
 
 
