@@ -12,3 +12,4 @@ class BudgetModel:
         self.session.add(budget)
         await self.session.commit()
         return budget
+    
