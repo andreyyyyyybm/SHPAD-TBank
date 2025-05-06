@@ -4,10 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base
 
 
-class Budget(Base):
-    __tablename__ = "budget"
+class Task(Base):
+    __tablename__ = "task"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     chat_id = Column(Integer)
-    min_cost = Column(Integer)
-    max_cost = Column(Integer)
+    user_id = Column(Integer)
+    target = Column(Str)
