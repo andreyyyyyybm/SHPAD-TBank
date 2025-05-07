@@ -9,6 +9,11 @@ import codecs
 from ml.links_search import build_travel_links
 from ml.web_search import web_search_transport, web_search_resident
 from ml.price_extract import price_extract
+from aiogram import F, Router
+
+router = Router()
+from aiogram import F, Router
+from aiogram import F, Router
 from aiogram.types import Message
 
 import commands.handlers
@@ -21,7 +26,7 @@ with codecs.open("ml/promt.txt","r","utf-8") as promt_:
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
-def find_trip(callback,data):
+def find_trip(data):
     # br = do_utils.BudgetRepository()
     print(data)
     min_cost, max_cost, city_from, white_list, black_list, pref, with_dates, end_dates = data
@@ -40,7 +45,7 @@ def find_trip(callback,data):
              },
             {
                 "role": "user",
-                "text": f"У тебя есть список данных для поездки. В них может быть бюджет поездки, желаемые места и так далее. Ты должен на основе этих данных составить план путешествия, найти туры, гостиницы, билеты и так далее. Тебе необязательно планировать путешествие со всеми интересами и желаниями. Дай подроный ответ с планом путшествия, ценой, датами и так далее.\n\n"
+                "text": f"У тебя есть список данных для поездки. В них может быть бюджет поездки, желаемые места и так далее. Ты должен на основе этих данных составить план путешествия, найти туры, гостиницы, билеты и так далее. Тебе необязательно планировать путешествие со всеми интересами и желаниями. Не старайся потратить всю сумму. Дай подроный ответ с планом путшествия, ценой, датами и так далее.\n\n"
                 f"Бюджет: от {min_cost} до {max_cost}\n\n"
                 f"Город отправления: {city_from}\n\n"
                 f"Приоритетные места: {white_list}\n\n"
@@ -92,12 +97,12 @@ trip['budget']['expenses']])
 {destination['city']}, {destination['country']} ({destination['arrival_date']} — {destination['departure_date']})
 - [{text_liv}]({build_travel_links(city_from, destination['city'], with_dates, end_dates)["booking"]}) {price_extract(web_search_resident(destination['city']))}/ночь
 - Активности:""" + "\n" + "\n".join([
-                                                                                                                                                                                                                                                                                                                                                                               f"     - {act['name']} ({act['date']} {act['time']}), стоимость: {act['cost']} {trip['budget']['currency']}"
-                                                                                                                                                                                                                                                                                                                                                                               for
-                                                                                                                                                                                                                                                                                                                                                                               act
-                                                                                                                                                                                                                                                                                                                                                                               in
-                                                                                                                                                                                                                                                                                                                                                                               destination[
-                                                                                                                                                                                                                                                                                                                                                                                   'activities']])
+       f"- {act['name']} ({act['date']} {act['time']}), стоимость: {act['cost']} {trip['budget']['currency']}"
+       for
+       act
+       in
+       destination[
+           'activities']])
 
         # Добавляем транспорт
         text_message += f"\n\n✈️ Транспорт:"
@@ -110,6 +115,10 @@ trip['budget']['expenses']])
         # participant = [callback.get_chat_member(callback.message.chat.id)]
         # print(participant)
         # Добавляем участников
+
+
+
+
         text_message += "\n\n👥 Участники:"
         for participant in trip['participants']:
             text_message += f"\n- {participant['name']} ({participant['role']}, контакт: {participant['contact']})"

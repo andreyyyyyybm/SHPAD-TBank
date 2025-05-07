@@ -12,10 +12,13 @@ keryboard_main = InlineKeyboardMarkup(
 )
 
 
-keryboard_listen = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [   InlineKeyboardButton(text="Включить", callback_data="listen_on"),
-            InlineKeyboardButton(text="Выключить", callback_data="listen_off"),
+keryboard_listen = ReplyKeyboardMarkup(
+    resize_keyboard=True,  # Оптимизирует размер кнопок
+    one_time_keyboard=True,  # Скрывает клавиатуру после нажатия (опционально)
+    keyboard=[
+        [
+            KeyboardButton(text="Включить"),
+            KeyboardButton(text="Выключить"),
         ],
     ],
 )
