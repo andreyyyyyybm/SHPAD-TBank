@@ -18,4 +18,6 @@ def web_search(city_from, to_city):
     )
 
     # Пример запроса
-    return tool.run(f"посмотри примерную цену на билет от {city_from} до {to_city}")
+    _ = tool.run(f"посмотри примерную цену на билет от {city_from} до {to_city}")
+    print(_)
+    return _
