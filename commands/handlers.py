@@ -103,7 +103,7 @@ async def listen_off(callback: CallbackQuery):
         с суммой не более {data_proc[1]}₽.
         📌 Подбираем лучший маршрут — осталось совсем немного!""")
         print(messages)
-        await callback.message.answer(find_trip.find_trip(callback,data_proc))
+        await callback.message.answer(find_trip.find_trip(callback,data_proc),parse_mode="Markdown")
         await callback.answer("", show_alert=True)
     else:
         await callback.message.answer("Прослушка не была активна.")

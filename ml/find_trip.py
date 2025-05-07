@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 import json
 import codecs
+from ml.links_search import build_travel_links
 from aiogram.types import Message
 
 import commands.handlers
@@ -77,11 +78,13 @@ def find_trip(callback,data):
                          trip['budget']['expenses']])
 
         # Добавляем маршрут
+        text_ = "Нажми"
         for destination in trip['destinations']:
             text_message += f"""
         🌍 Маршрут:
         {destination['city']}, {destination['country']} ({destination['arrival_date']} — {destination['departure_date']})
            - Проживание: {destination['accommodation']['name']} ({destination['accommodation']['type']}), {destination['accommodation']['cost_per_night']} {trip['budget']['currency']}/ночь
+           - Ссылка на бронирование: [{text_}]({build_travel_links(city_from,with_dates,end_dates)["booking"]})
            - Активности:""" + "\n".join([
                                                                                                                                                                                                                                                                                                                                                                                f"     - {act['name']} ({act['date']} {act['time']}), стоимость: {act['cost']} {trip['budget']['currency']}"
                                                                                                                                                                                                                                                                                                                                                                                for
@@ -112,3 +115,4 @@ def find_trip(callback,data):
         # Добавляем заметки
         text_message += f"\n\n📝 Заметки:\n{trip['notes']}"
         return text_message
+# СДЕЛАЙ ИМПОРТ ТАЙМ ТЕКУЩИЙ

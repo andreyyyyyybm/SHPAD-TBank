@@ -1,7 +1,8 @@
 from urllib.parse import quote
 
 def build_travel_links(destination, checkin, checkout, min_price=None, max_price=None, adults=1, rooms=1):
-
+    checkin = checkin.strftime("%Y-%m-%d")
+    checkout = checkout.strftime("%Y-%m-%d")
     encoded_destination = quote(destination)
 
 
