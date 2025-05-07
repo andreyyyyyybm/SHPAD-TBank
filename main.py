@@ -23,7 +23,12 @@ dp.include_router(router)
 async def init_db():
     db = database.Database()
     session = await db.get_session()
-    br = db_utils.BudgetModel(session)
+    bm = db_utils.BudgetModel(session)
+    dm = db_utils.DateModel(session)
+    im = db_utils.InterestModel(session)
+    nm = db_utils.NotificationsModel(session)
+    pm = db_utils.PlaceModel(session)
+    tm = db_utils.TaskModel(session)
     await db.create_db()
     await db.close()
 
