@@ -64,13 +64,14 @@ def find_trip(callback,data):
 
         # data = json.loads(travel_json)
         # data = json.loads(travel_json)
+        print(data)
         trip = data["trip"]
-        white_list = [x for x in white_list.splite()]
+        white_list = [x for x in white_list.split()]
         if len(white_list) != 1:
             to_city = white_list[0]
         else:
             to_city = white_list
-        links = build_travel_links(city_from, to_city, with_dates, end_dates)
+        # links = build_travel_links(city_from, to_city, with_dates, end_dates)
         # Формируем текст
         text_message = f"""
         📌 Планирование путешествия: *{trip['name']}*
@@ -81,15 +82,13 @@ def find_trip(callback,data):
 💰 Бюджет: {trip['budget']['total']} {trip['budget']['currency']}""" + "\n".join([f"- {expense['category']}: {expense['amount']} {trip['budget']['currency']}" for expense in
 trip['budget']['expenses']])
 
-        # Добавляем маршрут
-        text_dr = "Транспорт:"
         text_liv = "Проживание:"
 
         for destination in trip['destinations']:
             text_message += f"""
 🌍 Маршрут:
 {destination['city']}, {destination['country']} ({destination['arrival_date']} — {destination['departure_date']})
-- [{text_liv}]({links["booking"]}) {destination['accommodation']['name']} ({destination['accommodation']['type']}), {destination['accommodation']['cost_per_night']} {trip['budget']['currency']}/ночь
+- [{text_liv}]({build_travel_links(city_from, destination['city'], with_dates, end_dates)["booking"]}) {destination['accommodation']['name']} ({destination['accommodation']['type']}), {destination['accommodation']['cost_per_night']} {trip['budget']['currency']}/ночь
 - Активности:""" + "\n" + "\n".join([
                                                                                                                                                                                                                                                                                                                                                                                f"     - {act['name']} ({act['date']} {act['time']}), стоимость: {act['cost']} {trip['budget']['currency']}"
                                                                                                                                                                                                                                                                                                                                                                                for
@@ -99,10 +98,12 @@ trip['budget']['expenses']])
                                                                                                                                                                                                                                                                                                                                                                                    'activities']])
 
         # Добавляем транспорт
-        text_message += f"\n\n✈️ [{text_dr}]({links["google_flights"]}):"
+        text_message += f"\n\n✈️ Транспорт:"
+        # text_message += f"\n\n✈️ [{text_dr}]({links["google_flights"]}):"
+
         for transport in trip['transport']:
             text_message += f"""
-- {transport['type']}: {transport['departure']['city']} → {transport['arrival']['city']} ({transport['departure']['date']} {transport['departure']['time']})
+- [{transport['type']}]({build_travel_links(transport['departure']['city'], transport['arrival']['city'], with_dates, end_dates)["google_flights"]}): {transport['departure']['city']} → {transport['arrival']['city']} ({transport['departure']['date']} {transport['departure']['time']})
 - Бронь: {transport['booking_reference']}, стоимость: {transport['cost']} {trip['budget']['currency']}"""
         # participant = [callback.get_chat_member(callback.message.chat.id)]
         # print(participant)

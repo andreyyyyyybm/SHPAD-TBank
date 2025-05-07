@@ -10,24 +10,41 @@ load_dotenv()
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
-def fan_fact(place):
+folder_id = os.getenv("FOLDER_ID", "b1g1l90farmtbr7v0bip")
+api_key   = os.getenv("API_KEY",   "AQVN0R0iast5Eu7MYm-zpyxE6Jo9AZnloa9STQuX")
+
+def fan_fact(place: str) -> str:
     sdk = YCloudML(
         folder_id=folder_id,
         auth=api_key
     )
-    model = sdk.models.completions("yandexgpt", model_version="rc")
-    model = model.configure(temperature=0.3)
+    model = sdk.models.completions("yandexgpt-lite", model_version="rc")
+    model = model.configure(temperature=0.5)
 
-    system_prompt = (
-        "Ты бот для создания интересных фактов про города, чтобы привлекать внимание туристов к нему. Ты должен предоставить факт только про тот город, который тебе дают. Опираться на интернет и другие источники. Факт должен быть небольшим по размеру."
+    system_prompt = """
+    Ты — профессиональный копирайтер и краевед, специализирующийся на коротких ярких фактах о городах для туристов. 
+    Твой факт ДОЛЖЕН:
+    1. Быть строго реальным и проверяемым (основан на достоверных источниках: официальных сайтах, Википедии, музейных справках и т. п.).
+    2. Не содержать никаких выдумок или домыслов.
+    3. Предоставлять ссылку на источник в конце, если это возможно (или писать «Источник: Википедия» и т. п.).
+    4. Вписываться в 1–2 предложения (не более 40 слов) без приветствий, вопросов и призывов.
+    Если ты не можешь подтвердить факт — ответь: «Не удалось найти достоверный факт.»
+    5.  не пиши источник
+    """
+
+    user_prompt = (
+        f"Дай один интересный проверяемый факт про город {place}, "
+        "который обычно не упоминают в путеводителях."
     )
-    user_prompt = f"Напиши факт про город {place} "
 
-    response_iter = model.run([
+
+    result = model.run([
         {"role": "system", "text": system_prompt},
         {"role": "user",   "text": user_prompt},
     ])
-    result = model.run(response_iter)
-    for alternative in result:
-        print(alternative)
-        return alternative.text
+
+    fact = result.alternatives[0].text.strip()
+    return fact
+
+if __name__ == "__main__":
+    print(fan_fact("Париж"))
