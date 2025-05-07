@@ -1,8 +1,11 @@
+import datetime
 from urllib.parse import quote
 
 def build_travel_links(destination, checkin, checkout, min_price=None, max_price=None, adults=2, rooms=1):
-    checkin = checkin.strftime("%Y-%m-%d")
-    checkout = checkout.strftime("%Y-%m-%d")
+    if type(checkin) == datetime.datetime:
+        checkin = checkin.strftime("%Y-%m-%d")
+    if type(checkout) == datetime.datetime:
+        checkout = checkout.strftime("%Y-%m-%d")
     encoded_destination = quote(destination)
 
 
@@ -29,15 +32,15 @@ def build_travel_links(destination, checkin, checkout, min_price=None, max_price
 
 
 
-links = build_travel_links(
-    destination="Thailand",
-    checkin="2025-06-05",
-    checkout="2025-06-09",
-    min_price=1000,
-    max_price=5000,
-    adults=2,
-    rooms=2
-)
-
-for name, url in links.items():
-    print(f"{name}: {url}")
+# links = build_travel_links(
+#     destination="Thailand",
+#     checkin="2025-06-05",
+#     checkout="2025-06-09",
+#     min_price=1000,
+#     max_price=5000,
+#     adults=2,
+#     rooms=2
+# )
+#
+# for name, url in links.items():
+#     print(f"{name}: {url}")
