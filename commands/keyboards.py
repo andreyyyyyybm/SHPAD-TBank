@@ -3,10 +3,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 keryboard_main = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Прослушка", callback_data="listen")],
-        [
-            InlineKeyboardButton(text="Системные", callback_data="system"),
-            InlineKeyboardButton(text="Путешествие", callback_data="travel"),
-        ],
+        # [
+        #     InlineKeyboardButton(text="Системные", callback_data="system"),
+        #     InlineKeyboardButton(text="Путешествие", callback_data="travel"),
+        # ],
     ],
 )
 

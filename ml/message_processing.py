@@ -27,7 +27,8 @@ def trip_input(raw_text) -> dict:
         "  whitelist: str  # места через пробел\n"
         "  blacklist: str  # места через пробел\n"
         "  preferences: str\n"
-        "  dates: tuple(datetime.datetime, datetime.datetime)\n"
+        "  with_dates: datetime.datetime\n"
+        "  end_dates: datetime.datetime\n"
         "Без Markdown-оформления, только literal-dict."
     )
     user_prompt = f"RAW_INPUT:\n{raw_text}"
@@ -52,7 +53,7 @@ def trip_input(raw_text) -> dict:
         return None
 
     return [parsed.get("min_budget"), parsed.get("max_budget"), parsed.get("city_from"), parsed.get("whitelist"), parsed.get("blacklist"),
-            parsed.get("preferences"), parsed.get("dates")]
+            parsed.get("preferences"), parsed.get("with_dates"), parsed.get("end_dates")]
 
 
 if __name__ == "__main__":

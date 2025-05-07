@@ -22,8 +22,7 @@ api_key = os.environ["API_KEY"]
 def find_trip(callback,data):
     # br = do_utils.BudgetRepository()
     print(data)
-    min_cost, max_cost, city_from, white_list, black_list, pref, with_dates = data
-    with_dates, end_dates = with_dates
+    min_cost, max_cost, city_from, white_list, black_list, pref, with_dates, end_dates = data
 
 
     sdk = YCloudML(
@@ -70,22 +69,20 @@ def find_trip(callback,data):
         text_message = f"""
         📌 Планирование путешествия: *{trip['name']}*
 
-        🗓 Даты: {trip['start_date']} — {trip['end_date']}
-        📍 Описание: {trip['description']}
+🗓 Даты: {trip['start_date']} — {trip['end_date']}
+📍 Описание: {trip['description']}
 
-        💰 Бюджет: {trip['budget']['total']} {trip['budget']['currency']}
-        """ + "\n".join([f"- {expense['category']}: {expense['amount']} {trip['budget']['currency']}" for expense in
-                         trip['budget']['expenses']])
+💰 Бюджет: {trip['budget']['total']} {trip['budget']['currency']}""" + "\n".join([f"- {expense['category']}: {expense['amount']} {trip['budget']['currency']}" for expense in
+trip['budget']['expenses']])
 
         # Добавляем маршрут
-        text_ = "Нажми"
+        text_ = "Проживание:"
         for destination in trip['destinations']:
             text_message += f"""
-        🌍 Маршрут:
-        {destination['city']}, {destination['country']} ({destination['arrival_date']} — {destination['departure_date']})
-           - Проживание: {destination['accommodation']['name']} ({destination['accommodation']['type']}), {destination['accommodation']['cost_per_night']} {trip['budget']['currency']}/ночь
-           - Ссылка на бронирование: [{text_}]({build_travel_links(city_from,with_dates,end_dates)["booking"]})
-           - Активности:""" + "\n".join([
+🌍 Маршрут:
+{destination['city']}, {destination['country']} ({destination['arrival_date']} — {destination['departure_date']})
+- [{text_}]({build_travel_links(city_from,with_dates,end_dates)["booking"]}) {destination['accommodation']['name']} ({destination['accommodation']['type']}), {destination['accommodation']['cost_per_night']} {trip['budget']['currency']}/ночь
+- Активности:""" + "\n" + "\n".join([
                                                                                                                                                                                                                                                                                                                                                                                f"     - {act['name']} ({act['date']} {act['time']}), стоимость: {act['cost']} {trip['budget']['currency']}"
                                                                                                                                                                                                                                                                                                                                                                                for
                                                                                                                                                                                                                                                                                                                                                                                act
@@ -97,8 +94,8 @@ def find_trip(callback,data):
         text_message += "\n\n✈️ Транспорт:"
         for transport in trip['transport']:
             text_message += f"""
-        - {transport['type']}: {transport['departure']['city']} → {transport['arrival']['city']} ({transport['departure']['date']} {transport['departure']['time']})
-          - Бронь: {transport['booking_reference']}, стоимость: {transport['cost']} {trip['budget']['currency']}"""
+- {transport['type']}: {transport['departure']['city']} → {transport['arrival']['city']} ({transport['departure']['date']} {transport['departure']['time']})
+- Бронь: {transport['booking_reference']}, стоимость: {transport['cost']} {trip['budget']['currency']}"""
         # participant = [callback.get_chat_member(callback.message.chat.id)]
         # print(participant)
         # Добавляем участников
