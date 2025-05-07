@@ -90,6 +90,20 @@ async def listen_off(callback: CallbackQuery):
         # здесь можно передать collected_text в анализ или email
         data_proc = message_processing.trip_input(collected_text)
         print(data_proc)
+        if data_proc[1] == None:
+            data_proc[1] = data_proc[0]
+        elif data_proc[0] == None:
+            data_proc[0] = data_proc[1]
+            
+        if not(data_proc):
+            await callback.message.answer("Нужно прислать хоть что-нибудь содержательное")
+            await callback.answer("", show_alert=True)
+            return None
+        elif None in data_proc or (None, None) in data_proc:
+            await callback.message.answer("Слишком мало данных")
+            await callback.answer("", show_alert=True)
+            return None
+
 
         await callback.message.reply(
             text=f"""⏳ Ваш тур почти готов!
