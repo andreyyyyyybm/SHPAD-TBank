@@ -65,7 +65,12 @@ def find_trip(callback,data):
         # data = json.loads(travel_json)
         # data = json.loads(travel_json)
         trip = data["trip"]
-        links = build_travel_links(city_from, with_dates, end_dates)
+        white_list = [x for x in white_list.splite()]
+        if len(white_list) != 1:
+            to_city = white_list[0]
+        else:
+            to_city = white_list
+        links = build_travel_links(city_from, to_city, with_dates, end_dates)
         # Формируем текст
         text_message = f"""
         📌 Планирование путешествия: *{trip['name']}*
