@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import json
 import codecs
 from ml.links_search import build_travel_links
-from ml.web_search import web_search
+from ml.web_search import web_search_transport, web_search_resident
 from ml.price_extract import price_extract
 from aiogram.types import Message
 
@@ -90,7 +90,7 @@ trip['budget']['expenses']])
             text_message += f"""
 🌍 Маршрут:
 {destination['city']}, {destination['country']} ({destination['arrival_date']} — {destination['departure_date']})
-- [{text_liv}]({build_travel_links(city_from, destination['city'], with_dates, end_dates)["booking"]}) {destination['accommodation']['cost_per_night']} {trip['budget']['currency']}/ночь
+- [{text_liv}]({build_travel_links(city_from, destination['city'], with_dates, end_dates)["booking"]}) {price_extract(web_search_resident(destination['city']))}/ночь
 - Активности:""" + "\n" + "\n".join([
                                                                                                                                                                                                                                                                                                                                                                                f"     - {act['name']} ({act['date']} {act['time']}), стоимость: {act['cost']} {trip['budget']['currency']}"
                                                                                                                                                                                                                                                                                                                                                                                for
@@ -106,7 +106,7 @@ trip['budget']['expenses']])
         for transport in trip['transport']:
             text_message += f"""
 - [{transport['type']}]({build_travel_links(transport['departure']['city'], transport['arrival']['city'], with_dates, end_dates)["google_flights"]}): {transport['departure']['city']} → {transport['arrival']['city']} ({transport['departure']['date']} {transport['departure']['time']})
-- Примерная стоимость: {price_extract(web_search(transport['departure']['city'],transport['arrival']['city']))} {trip['budget']['currency']}"""
+- Примерная стоимость: {price_extract(web_search_transport(transport['departure']['city'],transport['arrival']['city']))} {trip['budget']['currency']}"""
         # participant = [callback.get_chat_member(callback.message.chat.id)]
         # print(participant)
         # Добавляем участников
