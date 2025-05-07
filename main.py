@@ -20,7 +20,6 @@ dp = Dispatcher()
 
 dp.include_router(router)
 
-
 async def init_db():
     db = database.Database()
     session = await db.get_session()

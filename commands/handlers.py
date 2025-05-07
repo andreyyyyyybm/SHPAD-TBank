@@ -53,6 +53,7 @@ async def listen_setting(callback: CallbackQuery):
 @router.callback_query(lambda call: call.data == "listen_on")
 async def listen_on(callback: CallbackQuery):
     chat_id = callback.message.chat.id
+    print(chat_id)
     if chat_id not in messages.keys():
         messages[chat_id] = ""
         await callback.message.reply(
@@ -94,15 +95,15 @@ async def listen_off(callback: CallbackQuery):
         Я уже подбираю лучшие маршруты, считаю бюджет и анализирую интересы команды.
 
         А пока — вот интересный факт 🌍:
-        {fan_facts.fan_fact(data_proc[2])}"""
+        {fan_facts.fan_fact(data_proc[3])}"""
         )
 
         await callback.message.reply(text=f"""🧳 Почти всё готово!
-        Мы уже знаем, что стоит искать туры в {data_proc[2]}
+        Мы уже знаем, что стоит искать туры в {data_proc[3]}
         с суммой не более {data_proc[1]}₽.
         📌 Подбираем лучший маршрут — осталось совсем немного!""")
         print(messages)
-        await callback.message.answer(find_trip.find_trip(data_proc))
+        await callback.message.answer(find_trip.find_trip(callback,data_proc))
         await callback.answer("", show_alert=True)
     else:
         await callback.message.answer("Прослушка не была активна.")
@@ -120,7 +121,7 @@ async def menu_travel(callback: CallbackQuery):
 
 @router.callback_query(lambda call: call.data == "prioritires")
 async def menu_prioritires(callback: CallbackQuery):
-    await callback.message.reply(text=f"Ваши проиритеты: {data_proc[4]}"
+    await callback.message.reply(text=f"Ваши проиритеты: {data_proc[5]}"
                                  # , reply_markup=kb.prioritires
                                  )
     await callback.answer("", show_alert=True)

@@ -10,6 +10,7 @@ from aiogram.types import Message
 
 import commands.handlers
 
+
 load_dotenv()
 
 with codecs.open("ml/promt.txt","r","utf-8") as promt_:
@@ -17,11 +18,11 @@ with codecs.open("ml/promt.txt","r","utf-8") as promt_:
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
-def find_trip(data):
+def find_trip(callback,data):
     # br = do_utils.BudgetRepository()
     print(data)
-    min_cost, max_cost, white_list, black_list, pref, with_dates = data
-    end_dates = ""
+    min_cost, max_cost, city_from, white_list, black_list, pref, with_dates = data
+    with_dates, end_dates = with_dates
 
 
     sdk = YCloudML(
@@ -39,6 +40,7 @@ def find_trip(data):
                 "role": "user",
                 "text": f"У тебя есть список данных для поездки. В них может быть бюджет поездки, желаемые места и так далее. Ты должен на основе этих данных составить план путешествия, найти туры, гостиницы, билеты и так далее. Тебе необязательно планировать путешествие со всеми интересами и желаниями. Дай подроный ответ с планом путшествия, ценой, датами и так далее.\n\n"
                 f"Бюджет: от {min_cost} до {max_cost}\n\n"
+                f"Город отправления: {city_from}\n\n"
                 f"Приоритетные места: {white_list}\n\n"
                 f"Черный список мест: {black_list}\n\n"
                 f"Интересы путешественников: {pref}\n\n"
@@ -94,7 +96,8 @@ def find_trip(data):
             text_message += f"""
         - {transport['type']}: {transport['departure']['city']} → {transport['arrival']['city']} ({transport['departure']['date']} {transport['departure']['time']})
           - Бронь: {transport['booking_reference']}, стоимость: {transport['cost']} {trip['budget']['currency']}"""
-
+        # participant = [callback.get_chat_member(callback.message.chat.id)]
+        # print(participant)
         # Добавляем участников
         text_message += "\n\n👥 Участники:"
         for participant in trip['participants']:

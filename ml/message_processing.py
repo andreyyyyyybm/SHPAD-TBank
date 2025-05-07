@@ -23,6 +23,7 @@ def trip_input(raw_text) -> dict:
         "Верни строго Python-словарь с ключами:\n"
         "  min_budget: int\n"
         "  max_budget: int\n"
+        "  city_from: str  # место\n"
         "  whitelist: str  # места через пробел\n"
         "  blacklist: str  # места через пробел\n"
         "  preferences: str\n"
@@ -50,7 +51,7 @@ def trip_input(raw_text) -> dict:
         print("Ошибка при разборе eval:", e)
         return None
 
-    return [parsed.get("min_budget"), parsed.get("max_budget"), parsed.get("whitelist"), parsed.get("blacklist"), 
+    return [parsed.get("min_budget"), parsed.get("max_budget"), parsed.get("city_from"), parsed.get("whitelist"), parsed.get("blacklist"),
             parsed.get("preferences"), parsed.get("dates")]
 
 
