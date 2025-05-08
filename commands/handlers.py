@@ -117,10 +117,11 @@ async def listen_off(message: Message):
         # здесь можно передать collected_text в анализ или email
         data_proc = message_processing.trip_input(collected_text)
         print(data_proc)
-        if data_proc[1] == None:
-            data_proc[1] = data_proc[0]
-        elif data_proc[0] == None:
-            data_proc[0] = data_proc[1]
+        if (data_proc):
+            if data_proc[1] == None:
+                data_proc[1] = data_proc[0]
+            elif data_proc[0] == None:
+                data_proc[0] = data_proc[1]
 
         if not(data_proc):
             await message.answer("Нужно прислать хоть что-нибудь содержательное")
@@ -146,8 +147,12 @@ async def listen_off(message: Message):
 Мы уже знаем, что стоит искать туры в {", ".join(data_proc[3].split())} с суммой не более {data_proc[1]}₽.
 
 📌 Подбираем лучший маршрут — осталось совсем немного!""")
-        print(messages)
-        await message.answer(find_trip.find_trip(data_proc),parse_mode="Markdown")
+        # print(messages)
+        # members = message.bot.
+        # print(members)
+        temp_trip = find_trip.find_trip(data_proc)
+        await db.history_add(chat_id, temp_trip)
+        await message.answer(temp_trip, parse_mode="Markdown",reply_markup=kb.keryboard_main)
     else:
         await message.answer("Прослушка не была активна.")
 
@@ -186,7 +191,12 @@ async def preferences_b(callback: CallbackQuery):
 
 @router.callback_query(lambda call: call.data == "past_trip")
 async def past_trip(callback: CallbackQuery):
-    await callback.message.reply(text="Прошлые планы", reply_markup=kb.keryboard_main)
+
+    await callback.message.reply(
+        text=await history_for_chat_id(callback.message.chat.id, db),
+        reply_markup=kb.keryboard_main,
+        parse_mode="Markdown"
+    )
     await callback.answer("", show_alert=True)
 
 
