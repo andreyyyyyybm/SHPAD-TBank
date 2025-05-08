@@ -3,12 +3,13 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio.session import async_sessionmaker, AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import select
+from typing import List
 
+from db.model.history import History, Base
 
 load_dotenv()
 
-Base = declarative_base()
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_async_engine(DATABASE_URL, echo=True)
 
@@ -26,26 +27,25 @@ class Database:
 
     async def create_db(self):
         async with self.engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
-    # async def add_budget(self, chat_id, min_cost, max_cost):
-    #     async with self.async_session() as session:
-    #         async with session.begin():
-    #             bud = Budget(
-    #                 chat_id=chat_id, min_cost=min_cost, max_cost=max_cost
-    #             )
-    #             session.add(bud)
-    #         await session.commit()
+    async def history_add(self, chat_id: int, text: str):
+        async with self.async_session() as session:
+            async with session.begin():
+                history = History(
+                    chat_id=chat_id, text=text,
+                )
+                session.add(history)
 
-    # async def add_date(self, chat_id, with_dates, end_dates):
-    #     async with self.async_session() as session:
-    #         async with session.begin():
-    #             date = Date(
-    #                 chat_id=chat_id, with_dates=with_dates, end_dates=end_dates
-    #             )
-    #             session.add(date)
-    #         await session.commit
+            await session.commit()
+
+    async def get_history(self, chat_id: int) -> List[History]:
+        async with self.async_session() as session:
+            result = await session.execute(
+                select(History).where(History.chat_id == chat_id)
+            )
+            return result.scalars().all()
+
     async def get_session(self) -> AsyncSession:
         return self.async_session()
 

@@ -7,8 +7,10 @@ from aiogram.types import BufferedInputFile, CallbackQuery, Message
 
 import commands.keyboards as kb
 from ml import find_trip, message_processing, fan_facts
+from db import database
 
 
+db = database.Database()
 router = Router()
 
 # messages: dict[int, str] = {}
@@ -16,8 +18,24 @@ messages = {}
 data_proc = ["не установлено" for x in range(6)]
 
 
+async def history_for_chat_id(chat_id: int, db: database.Database) -> str:
+    """
+    Получает историю чата из базы данных и форматирует ее в строку.
 
-# await state.clear()
+    Args:
+        chat_id: ID чата, историю которого нужно получить.
+        db: Экземпляр класса Database для взаимодействия с базой данных.
+
+    Returns:
+        Строка с отформатированной историей чата.
+    """
+    history_list = await db.get_history(chat_id)
+    history_text = ""
+    if history_list:
+        for item in history_list:
+            history_text += f"{item.text}\n"
+    return history_text
+
 
 @router.message(CommandStart())
 async def start(message: Message):
@@ -30,6 +48,7 @@ async def start(message: Message):
 распределить ответственность (кто покупает билеты, кто ищет жильё),
 составить план и предложить лучшие направления.
 🛠 Всё настраивается — от уведомлений до личных задач. Просто общайтесь, а я позабочусь о деталях!""", reply_markup=kb.keryboard_main)
+
 
 
 
@@ -102,7 +121,7 @@ async def listen_off(message: Message):
             data_proc[1] = data_proc[0]
         elif data_proc[0] == None:
             data_proc[0] = data_proc[1]
-            
+
         if not(data_proc):
             await message.answer("Нужно прислать хоть что-нибудь содержательное")
             return None
