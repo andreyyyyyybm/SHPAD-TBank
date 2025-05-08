@@ -31,6 +31,11 @@ def find_trip(data):
     print(data)
     min_cost, max_cost, city_from, white_list, black_list, pref, with_dates, end_dates = data
 
+    # data_dict = {}
+    # for name in ["min_cost", "max_cost", "city_from", "white_list", "black_list", "pref", "with_dates", "end_dates"]:
+    #     data_dict[name] = eval(name)
+    # print(data_dict)
+
 
     sdk = YCloudML(
         folder_id=folder_id, auth=api_key

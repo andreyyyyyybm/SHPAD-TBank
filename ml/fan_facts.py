@@ -10,8 +10,8 @@ load_dotenv()
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
-folder_id = os.getenv("FOLDER_ID", "b1g1l90farmtbr7v0bip")
-api_key   = os.getenv("API_KEY",   "AQVN0R0iast5Eu7MYm-zpyxE6Jo9AZnloa9STQuX")
+folder_id = os.getenv("FOLDER_ID")
+api_key   = os.getenv("API_KEY")
 
 def fan_fact(place: str) -> str:
     sdk = YCloudML(
