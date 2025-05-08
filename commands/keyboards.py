@@ -4,6 +4,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 keryboard_main = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Прослушка", callback_data="listen")],
+        [InlineKeyboardButton(text="Прошлые планы", callback_data="past_trip")],
         # [
         #     InlineKeyboardButton(text="Системные", callback_data="system"),
         #     InlineKeyboardButton(text="Путешествие", callback_data="travel"),

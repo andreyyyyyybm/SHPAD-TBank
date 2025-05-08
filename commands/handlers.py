@@ -165,6 +165,12 @@ async def preferences_b(callback: CallbackQuery):
     await callback.answer("", show_alert=True)
 
 
+@router.callback_query(lambda call: call.data == "past_trip")
+async def past_trip(callback: CallbackQuery):
+    await callback.message.reply(text="Прошлые планы", reply_markup=kb.keryboard_main)
+    await callback.answer("", show_alert=True)
+
+
 @router.callback_query(lambda call: call.data == "interests")
 async def interests(callback: CallbackQuery):
     await callback.message.reply(
