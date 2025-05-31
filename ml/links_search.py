@@ -30,18 +30,3 @@ def build_travel_links(city_from, to_city, checkin, checkout, min_price=None, ma
         "booking": booking_url,
         "google_flights": google_flight_url
     }
-
-
-
-# links = build_travel_links(
-#     destination="Thailand",
-#     checkin="2025-06-05",
-#     checkout="2025-06-09",
-#     min_price=1000,
-#     max_price=5000,
-#     adults=2,
-#     rooms=2
-# )
-#
-# for name, url in links.items():
-#     print(f"{name}: {url}")

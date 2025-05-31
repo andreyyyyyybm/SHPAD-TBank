@@ -1,7 +1,7 @@
 import datetime
 import re
 from yandex_cloud_ml_sdk import YCloudML
-
+import codecs
 import os
 from dotenv import load_dotenv
 
@@ -10,6 +10,10 @@ load_dotenv()
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
+
+
+with codecs.open("ml/promt_fact.txt","r","utf-8") as promt_fact_:
+    promt_fact = promt_fact_.read()
 def trip_input(raw_text) -> dict:
     sdk = YCloudML(
         folder_id=folder_id,
@@ -18,19 +22,7 @@ def trip_input(raw_text) -> dict:
     model = sdk.models.completions("yandexgpt-lite", model_version="rc")
     model = model.configure(temperature=0.0)
 
-    system_prompt = (
-        "Ты бот для разбора пользовательского ввода. "
-        "Верни строго Python-словарь с ключами:\n"
-        "  min_budget: int\n"
-        "  max_budget: int\n"
-        "  city_from: str  # место\n"
-        "  whitelist: str  # места через пробел\n"
-        "  blacklist: str  # места через пробел\n"
-        "  preferences: str\n"
-        "  with_dates: datetime.datetime\n"
-        "  end_dates: datetime.datetime\n"
-        "Без Markdown-оформления, только literal-dict."
-    )
+    system_prompt = promt_fact
     user_prompt = f"RAW_INPUT:\n{raw_text}"
 
     response_iter = model.run([
@@ -52,19 +44,30 @@ def trip_input(raw_text) -> dict:
         print("Ошибка при разборе eval:", e)
         return None
 
-    return [parsed.get("min_budget"), parsed.get("max_budget"), parsed.get("city_from"), parsed.get("whitelist"), parsed.get("blacklist"),
-            parsed.get("preferences"), parsed.get("with_dates"), parsed.get("end_dates")]
+    data = [parsed.get("min_budget"), parsed.get("max_budget"), parsed.get("city_from"), parsed.get("whitelist"),
+     parsed.get("blacklist"),
+     parsed.get("preferences"), parsed.get("with_dates"), parsed.get("end_dates")]
 
 
-if __name__ == "__main__":
-    example_input = (
-        "Бюджет: от 500 до 1500\n"
-        "Приоритетные места: Москва, Санкт-Петербург, Казань\n"
-        "Черный список мест: Тула, Ярославль\n"
-        "Интересы путешественников: музеи, гастрономия\n"
-        "Примерные даты: 2025-06-10 — 2025-06-20"
-    )
+    min_cost, max_cost, city_from, white_list, black_list, pref, with_dates, end_dates = data
 
-    out = trip_input(example_input)
-    if out:
-        print(out)
+    data_dict = {}
+    for name in ["min_cost", "max_cost", "city_from", "white_list", "black_list", "pref", "with_dates", "end_dates"]:
+        data_dict[name] = eval(name)
+    if data_dict["white_list"] == "":
+        data_dict["white_list"] = None
+    return data_dict
+
+
+# if __name__ == "__main__":
+#     example_input = (
+#         "Бюджет: от 500 до 1500\n"
+#         "Приоритетные места: Москва, Санкт-Петербург, Казань\n"
+#         "Черный список мест: Тула, Ярославль\n"
+#         "Интересы путешественников: музеи, гастрономия\n"
+#         "Примерные даты: 2025-06-10 — 2025-06-20"
+#     )
+#
+#     out = trip_input(example_input)
+#     if out:
+#         print(out)
