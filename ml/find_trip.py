@@ -40,7 +40,7 @@ async def find_trip(data_prev):
              },
             {
                 "role": "user",
-                "text": f"У тебя есть список данных для поездки. В них может быть бюджет поездки, желаемые места и так далее. Ты должен на основе этих данных составить план путешествия, найти туры, гостиницы, билеты и так далее. Тебе необязательно планировать путешествие со всеми интересами и желаниями. Приводи актуальные цены на еду и транспорт. Ты не должен выходить за лимит суммы, но и не должен тратить её всю. Дай подроный ответ с планом путшествия, ценой, датами и так далее.\n\n"
+                "text": f"У тебя есть список данных для поездки. В них может быть бюджет поездки, желаемые места и так далее. Ты должен на основе этих данных составить план путешествия, найти туры, гостиницы, билеты и так далее. Ты должен также спланировать дорогу обратно (билеты). Тебе необязательно планировать путешествие со всеми интересами и желаниями. Приводи актуальные цены на еду и транспорт. Ты не должен выходить за лимит суммы, но и не должен тратить её всю. Дай подроный ответ с планом путшествия, ценой, датами и так далее.\n\n"
                         f"Бюджет: от {data_prev["min_cost"]} до {data_prev["max_cost"]}\n\n"
                         f"Город отправления: {data_prev["city_from"]}\n\n"
                         f"Приоритетные места: {data_prev["white_list"]}\n\n"
@@ -64,31 +64,45 @@ async def find_trip(data_prev):
         # Формируем текст
         real_pricing_rent_dict = {}
         real_pricing_transport_dict = {}
+        flag_rent = True
+        flag_transport = True
         for destination in trip['destinations']:
             temp_price_ = price_extract(web_search_resident(destination['city']))
-            # temp_price_ = "3421 рублей"
             temp_price_ = temp_price_.replace(" ", "")
-
-            real_pricing_rent_dict[destination['city']] = int(*re.findall(r'\d+', temp_price_))
-            print(real_pricing_rent_dict)
+            if "₽" in temp_price_ or "рубл" in temp_price_:
+                real_pricing_rent_dict[destination['city']] = [re.findall(r'\d+', temp_price_)[0], "".join(
+                    re.findall(r'[^0-9]', temp_price_))]  # может быть пустым. нужен try
+            else:
+                flag_rent = False
+                real_pricing_rent_dict[destination['city']] = [re.findall(r'\d+', temp_price_)[0], "".join(
+                    re.findall(r'[^0-9]', temp_price_))]  # может быть пустым. нужен try
         for transport in trip['transport']:
             temp_price_ = price_extract(
-                web_search_transport(transport['departure']['city'], transport['arrival']['city']).replace(" ", ""))
-            # temp_price_ = "11113 рублей"
+                web_search_transport(transport['departure']['city'], transport['arrival']['city']))
             temp_price_ = temp_price_.replace(" ", "")
-            real_pricing_transport_dict[f'{transport['departure']['city']}-{transport['arrival']['city']}'] = int(
-                *re.findall(r'\d+', temp_price_))
+            if "₽" in temp_price_ or "рубл" in temp_price_:
+                real_pricing_transport_dict[f'{transport['departure']['city']}-{transport['arrival']['city']}'] = [
+                    re.findall(r'\d+', temp_price_)[0], "".join(re.findall(r'[^0-9]', temp_price_))]
+            else:
+                flag_rent = False
+                real_pricing_transport_dict[f'{transport['departure']['city']}-{transport['arrival']['city']}'] = [
+                    re.findall(r'\d+', temp_price_)[0], "".join(re.findall(r'[^0-9]', temp_price_))]
 
-        real_pricing_rent = trip['budget']['expenses'][0]['amount']
-        real_pricing_transport = trip['budget']['expenses'][1]['amount']
-        print((datetime.strptime(data_prev["end_dates"], '%Y-%m-%d') - datetime.strptime(data_prev["with_dates"],'%Y-%m-%d')))
         try:
-            if sum(real_pricing_rent_dict.values()) * (datetime.strptime(data_prev["end_dates"], '%Y-%m-%d') - datetime.strptime(data_prev["with_dates"],'%Y-%m-%d')).days < trip['budget']['total']:
-                trip['budget']['expenses'][1]['amount'] = sum(real_pricing_rent_dict.values()) * (
-                            datetime.strptime(data_prev["end_dates"], '%Y-%m-%d') - datetime.strptime(
-                        data_prev["with_dates"], '%Y-%m-%d')).days
-            if sum(real_pricing_transport_dict.values()) < trip['budget']['total']:
-                trip['budget']['expenses'][0]['amount'] = sum(real_pricing_transport_dict.values())
+            if flag_rent and sum([int(x[0]) for x in real_pricing_rent_dict.values()]) * (
+                    datetime.strptime(data_prev["end_dates"], '%Y-%m-%d') - datetime.strptime(data_prev["with_dates"],
+                                                                                              '%Y-%m-%d')).days < \
+                    trip['budget']['total']:
+                trip['budget']['expenses'][1]['amount'] = sum([int(x[0]) for x in real_pricing_rent_dict.values()]) * (
+                        datetime.strptime(data_prev["end_dates"], '%Y-%m-%d') - datetime.strptime(
+                    data_prev["with_dates"], '%Y-%m-%d')).days
+            else:
+                trip['budget']['expenses'][1]['amount'] = "~" + str(trip['budget']['expenses'][1]['amount'])
+            if flag_transport and sum([int(x[0]) for x in real_pricing_transport_dict.values()]) < trip['budget'][
+                'total']:
+                trip['budget']['expenses'][0]['amount'] = sum([int(x[0]) for x in real_pricing_transport_dict.values()])
+            else:
+                trip['budget']['expenses'][0]['amount'] = "~" + str(trip['budget']['expenses'][0]['amount'])
         except Exception as e:
             print("error in real_pricing", e)
 
