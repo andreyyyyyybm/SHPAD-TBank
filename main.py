@@ -7,6 +7,7 @@ from aiogram import Dispatcher
 from dotenv import load_dotenv
 
 from commands.handlers import router
+
 # from db import database
 
 load_dotenv()
@@ -17,6 +18,9 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 dp.include_router(router)
+
+
+# база данных на данный момент отключена
 
 # async def init_db():
 #     db = database.Database()

@@ -71,11 +71,11 @@ async def find_trip(data_prev):
             temp_price_ = temp_price_.replace(" ", "")
             if "₽" in temp_price_ or "рубл" in temp_price_:
                 real_pricing_rent_dict[destination['city']] = [re.findall(r'\d+', temp_price_)[0], "".join(
-                    re.findall(r'[^0-9]', temp_price_))]  # может быть пустым. нужен try
+                    re.findall(r'[^0-9]', temp_price_))]
             else:
                 flag_rent = False
                 real_pricing_rent_dict[destination['city']] = [re.findall(r'\d+', temp_price_)[0], "".join(
-                    re.findall(r'[^0-9]', temp_price_))]  # может быть пустым. нужен try
+                    re.findall(r'[^0-9]', temp_price_))]
         for transport in trip['transport']:
             temp_price_ = price_extract(
                 web_search_transport(transport['departure']['city'], transport['arrival']['city']))

@@ -11,7 +11,7 @@ load_dotenv()
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
 folder_id = os.getenv("FOLDER_ID")
-api_key   = os.getenv("API_KEY")
+api_key = os.getenv("API_KEY")
 
 def fan_fact(place: str) -> str:
     sdk = YCloudML(
@@ -45,6 +45,3 @@ def fan_fact(place: str) -> str:
 
     fact = result.alternatives[0].text.strip()
     return fact
-
-if __name__ == "__main__":
-    print(fan_fact("Париж"))

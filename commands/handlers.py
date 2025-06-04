@@ -39,6 +39,8 @@ interact_missing = {
 }
 
 
+# база данных, на данный момент отключено
+
 # async def history_for_chat_id(chat_id: int, db: database.Database) -> str:
 #     """
 #     Получает историю чата из базы данных и форматирует ее в строку.
@@ -121,13 +123,14 @@ async def listen_off(message: Message):
             await message.answer(
                 f"Пожалуйста, продолжайте обсуждение дальше или сразу введите в сообщениях недостающие данные.")
             return None
-        # КОСТЫЛИ
+        # обработка выбивающихся случаев
         if data_proc["with_dates"]:
             if data_proc["with_dates"][:4] != "2025" or data_proc["end_dates"][:4] != "2025" or data_proc[
                 "with_dates"] == None or data_proc["end_dates"] == None:
                 for x in range(1, 10):
                     messages[chat_id] = messages[chat_id].replace(f"2{x}", "")
-                await message.answer("Извините, что-то не так с датами. Я не умею планировать слишком далекие поездки. Возможно, вы не ввели год.")
+                await message.answer(
+                    "Извините, что-то не так с датами. Я не умею планировать слишком далекие поездки. Возможно, вы не ввели год.")
                 await asyncio.sleep(1)
                 return None
         else:
@@ -152,11 +155,11 @@ async def listen_off(message: Message):
             text=f"{knowledge[0]}{", ".join(data_proc["white_list"].split())}{knowledge[1]}{data_proc["max_cost"]}{knowledge[2]}")
         print(data_proc)
         temp_trip = await find_trip.find_trip(data_proc)
-        # await db.history_add(chat_id, temp_trip)
         await message.answer(temp_trip, parse_mode="Markdown", reply_markup=kb.keyboard_main)
     else:
         await message.answer("Прослушка не была активна.")
 
+# работа с базой данных, на данный момент отключено.
 
 # @router.callback_query(lambda call: call.data == "past_trip")
 # async def past_trip(callback: CallbackQuery):

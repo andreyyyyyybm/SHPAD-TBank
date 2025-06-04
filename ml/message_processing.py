@@ -5,15 +5,15 @@ import codecs
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 folder_id = os.environ["FOLDER_ID"]
 api_key = os.environ["API_KEY"]
 
-
-with codecs.open("ml/promt_fact.txt","r","utf-8") as promt_fact_:
+with codecs.open("ml/promt_fact.txt", "r", "utf-8") as promt_fact_:
     promt_fact = promt_fact_.read()
+
+
 def trip_input(raw_text) -> dict:
     sdk = YCloudML(
         folder_id=folder_id,
@@ -27,7 +27,7 @@ def trip_input(raw_text) -> dict:
 
     response_iter = model.run([
         {"role": "system", "text": system_prompt},
-        {"role": "user",   "text": user_prompt},
+        {"role": "user", "text": user_prompt},
     ])
     alt = next(iter(response_iter), None)
 
@@ -45,9 +45,8 @@ def trip_input(raw_text) -> dict:
         return None
 
     data = [parsed.get("min_budget"), parsed.get("max_budget"), parsed.get("city_from"), parsed.get("whitelist"),
-     parsed.get("blacklist"),
-     parsed.get("preferences"), parsed.get("with_dates"), parsed.get("end_dates")]
-
+            parsed.get("blacklist"),
+            parsed.get("preferences"), parsed.get("with_dates"), parsed.get("end_dates")]
 
     min_cost, max_cost, city_from, white_list, black_list, pref, with_dates, end_dates = data
 
@@ -57,17 +56,3 @@ def trip_input(raw_text) -> dict:
     if data_dict["white_list"] == "":
         data_dict["white_list"] = None
     return data_dict
-
-
-# if __name__ == "__main__":
-#     example_input = (
-#         "Бюджет: от 500 до 1500\n"
-#         "Приоритетные места: Москва, Санкт-Петербург, Казань\n"
-#         "Черный список мест: Тула, Ярославль\n"
-#         "Интересы путешественников: музеи, гастрономия\n"
-#         "Примерные даты: 2025-06-10 — 2025-06-20"
-#     )
-#
-#     out = trip_input(example_input)
-#     if out:
-#         print(out)
