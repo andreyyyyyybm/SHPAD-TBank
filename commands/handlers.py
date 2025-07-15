@@ -17,7 +17,7 @@ router = Router()
 # messages: dict[int, str] = {}
 messages = {}
 data_proc = [None for x in range(6)]
-with codecs.open("ml/exemple_trip.txt", "r", "utf-8") as trip_exemple_:
+with codecs.open("ml/example_trip.txt", "r", "utf-8") as trip_exemple_:
     trip_exemple = trip_exemple_.read()
 with codecs.open("ml/listen_started_text.txt", "r", "utf-8") as listen_started_text_:
     listen_started_text = listen_started_text_.read()
